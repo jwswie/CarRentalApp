@@ -1,0 +1,17 @@
+﻿<UserControl x:Class="CarRentalApp.CategoryControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CarRentalApp"
+             mc:Ignorable="d" 
+             d:DesignHeight="197" d:DesignWidth="259">
+    <Canvas Background="White">
+        <Image x:Name="CarImage" Height="136" Width="259"/>
+        <Label Content="Category" FontSize="10" Canvas.Top="142"/>
+        <Label x:Name="Category" Content="Economy" FontSize="20" Canvas.Top="158" Canvas.Left="-3"/>
+        <Label Content="from" FontSize="10" Canvas.Top="149" Canvas.Left="186"/>
+        <Label x:Name="Price" Content="14$" FontSize="20" Canvas.Top="139" Canvas.Left="213"/>
+        <Label Content="/day" FontSize="10" Canvas.Top="164" Canvas.Left="225"/>
+    </Canvas>
+</UserControl>

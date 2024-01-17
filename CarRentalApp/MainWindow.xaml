@@ -1,0 +1,155 @@
+﻿<Window x:Class="CarRentalApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CarRentalApp"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="500" Width="1000">
+
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#FFE40A1A" />
+            <Setter Property="FontFamily" Value="Verdana" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FF262626" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="Label">
+            <Setter Property="FontFamily" Value="Verdana" />
+            <Setter Property="Foreground" Value="Black" />
+        </Style>
+    </Window.Resources>
+
+    <Grid x:Name="MainGrid">
+
+        <Canvas Margin="20,20,774,20">
+            <Label Content="WanderWheels" FontFamily="Ancona-Ex" FontSize="15" Canvas.Left="18"/>
+            <Label Content="Unlock your journey" FontSize="8" Canvas.Left="47" Canvas.Top="19"/>
+            <Label Content="Menu" FontFamily="Ancona-Ex" FontSize="25" Canvas.Left="40" Canvas.Top="58"/>
+
+            <Button Content="Home" FontSize="16" Width="144" Canvas.Left="18" Canvas.Top="107" Height="27" Click="HomeButton_Click"/>
+            <Button Content="Profile" FontSize="16" Width="144" Canvas.Left="18" Canvas.Top="147" Height="27" Click="ProfileButton_Click"/>
+            <Label x:Name="LogInLabel" Content="Log In" FontSize="16" Cursor="Hand" Canvas.Left="60" Canvas.Top="390" MouseDown="LogInLabel_MouseDoubleClick"/>
+            <Button Content="Contact" FontSize="16" Width="144" Canvas.Left="18" Canvas.Top="185" Height="27" Click="ContactButton_Click"/>
+        </Canvas>
+
+        <Canvas Margin="218,20,20,20" x:Name="Catalog" Visibility="Visible" IsEnabled="True">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Height="429" Width="774">
+                <Grid x:Name="CatalogGrid" ShowGridLines="False" Height="425" Width="776" MouseDown="Grid_Click">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                </Grid>
+            </ScrollViewer>
+        </Canvas>
+
+        <Canvas x:Name="CarView" Visibility="Hidden" IsEnabled="False" Margin="223,20,10,20" Background="White">
+            <Label x:Name="CarNameLabel" Content="Fiat Panda" FontSize="25" Canvas.Left="482" Canvas.Top="43" FontFamily="Ancona-Ex"/>
+            <Label x:Name="YearLabel" Content="(2011)" FontSize="13" Canvas.Left="650" Canvas.Top="82"/>
+            <Label x:Name="Price3" Content="39$" FontSize="20" Canvas.Left="602" Canvas.Top="115"/>
+            <Label Content="1-3 days:" FontSize="15" Canvas.Left="466" Canvas.Top="118"/>
+            <Label Content="/day" FontSize="13" Canvas.Top="120" Canvas.Left="642"/>
+            <Label x:Name="ConditionerLabel" Content="Conditioner" FontSize="15" Canvas.Left="52" Canvas.Top="275"/>
+            <Label x:Name="TransmissionLabel" Content="Automatic" FontSize="15" Canvas.Left="53" Canvas.Top="308"/>
+            <Label x:Name="FuelLabel" Content="Gasoline" FontSize="15" Canvas.Left="53" Canvas.Top="338"/>
+            <Label x:Name="StatusLabel" Content="Not Rented" FontSize="15" Canvas.Left="10" Canvas.Top="391" FontFamily="Bookman Old Style" />
+            <Image x:Name="CarImage" Canvas.Top="43" Height="177" Width="320" Canvas.Left="34"/>
+            <Button Content="Book now" FontSize="17" Width="218" Height="26" Canvas.Left="474" Canvas.Top="252" Click="BookButton_Click"/>
+            <Label x:Name="Price9" Content="39$" FontSize="20" Canvas.Left="602" Canvas.Top="152"/>
+            <Label Content="4-9 days:" FontSize="15" Canvas.Left="466" Canvas.Top="155"/>
+            <Label Content="/day" FontSize="13" Canvas.Top="157" Canvas.Left="642"/>
+            <Label x:Name="Price26" Content="39$" FontSize="20" Canvas.Left="602" Canvas.Top="191"/>
+            <Label Content="10-26+ days:" FontSize="15" Canvas.Left="466" Canvas.Top="194"/>
+            <Label Content="/day" FontSize="13" Canvas.Top="196" Canvas.Left="642"/>
+            <Label Content="Details:" FontSize="20" Canvas.Left="37" Canvas.Top="232"/>
+            <Rectangle x:Name="Color1" Tag="1" Width="34" Height="34" RadiusX="10" RadiusY="10" Canvas.Left="372" Canvas.Top="55" MouseDown="ColorButton_Click" Cursor="Hand"/>
+            <Rectangle x:Name="Color2" Tag="2" Width="34" Height="34" RadiusX="10" RadiusY="10" Canvas.Left="372" Canvas.Top="112" MouseDown="ColorButton_Click" Cursor="Hand"/>
+            <Rectangle x:Name="Color3" Tag="3" Width="34" Height="34" RadiusX="10" RadiusY="10" Canvas.Left="372" Canvas.Top="173" MouseDown="ColorButton_Click" Cursor="Hand"/>
+            <Image Source="D:\\CarRentalApp\\CarRentalApp\\Icon1.png" Height="25" Canvas.Top="274" Width="24" Canvas.Left="28"/>
+            <Image Source="D:\\CarRentalApp\\CarRentalApp\\Icon2.png" Height="25" Canvas.Top="308" Width="24" Canvas.Left="28"/>
+            <Image Source="D:\\CarRentalApp\\CarRentalApp\\Icon3.png" Height="25" Canvas.Top="335" Width="24" Canvas.Left="28"/>
+        </Canvas>
+
+        <Canvas x:Name="LogIn" Margin="218,10,20,20" Visibility="Hidden" IsEnabled="False">
+            <Label Content="Log In" Canvas.Left="318" Canvas.Top="10" FontFamily="Ancona-Ex" FontSize="30"/>
+
+            <Label Content="Mail:" FontSize="20" Canvas.Left="215" Canvas.Top="116"/>
+            <TextBox x:Name="txtEmailL" Canvas.Left="279" Canvas.Top="122" Width="219" Height="26"/>
+
+            <Label Content="Password:" FontSize="20" Canvas.Top="154" Canvas.Left="215"/>
+            <PasswordBox x:Name="pwdPasswordL" Canvas.Left="333" Canvas.Top="158" Width="165" Height="26"/>
+
+            <Button Content="Log In" FontSize="17" Width="218" Height="26" Canvas.Left="251" Canvas.Top="236" Click="logInButton_Click"/>
+            <Label Content="Don't have an account yet?" FontSize="10" Canvas.Top="262" Canvas.Left="291"/>
+            <Label Content="Sign In" FontSize="10" Canvas.Top="284" Canvas.Left="343" MouseDown="SignInLabel_MouseDown" Foreground="#FFE40A1A" Cursor="Hand"/>
+        </Canvas>
+
+        <Canvas x:Name="Registration" Margin="218,10,20,20" Background="White" Visibility="Hidden" IsEnabled="False">
+            <Label Content="Registration" FontSize="30" Canvas.Left="259" Canvas.Top="10" FontFamily="Ancona-Ex"/>
+            <Label Content="Full name:" Canvas.Left="184" Canvas.Top="100" FontSize="20"/>
+            <TextBox x:Name="txtFullName" Canvas.Left="303" Canvas.Top="105" Width="150"  Height="26"/>
+            <Label Content="Mail:" Canvas.Left="184" Canvas.Top="133" FontSize="20"/>
+            <TextBox x:Name="txtEmail" Canvas.Left="248" Canvas.Top="140" Width="205"  Height="26"/>
+            <Label Content="Password:" Canvas.Left="183" Canvas.Top="166" FontSize="20"/>
+            <PasswordBox x:Name="pwdPassword" Canvas.Left="296" Canvas.Top="171" Width="157"  Height="26"/>
+            <Label Content="Password confirmation:" Canvas.Left="183" Canvas.Top="200" FontSize="20"/>
+            <PasswordBox x:Name="pwdConfirmPassword" Canvas.Left="434" Width="157" Canvas.Top="204" Height="26"/>
+            <Button Content="Sign In" Click="signInButton_Click" FontSize="17" Width="218" Height="26" Canvas.Left="239" Canvas.Top="256"/>
+        </Canvas>
+
+        <Canvas Background="White" x:Name="UserProfile" Visibility="Hidden" IsEnabled="False" Margin="218,10,0,10">
+            <Label Content="Your Profile" FontSize="30" Canvas.Left="286" Canvas.Top="10" FontFamily="Ancona-Ex"/>
+            <Label x:Name="ProfileUsernameLabel" Content="User Name" FontSize="20" HorizontalAlignment="Center" Canvas.Left="334" Canvas.Top="67"/>
+            <Button Content="Edit profile"  Width="251" Height="34" Canvas.Left="269" Canvas.Top="155" FontSize="18" Click="EditProfileButton_Click"/>
+            <Button Content="Booked Cars" Width="251" Height="34" Canvas.Left="269" Canvas.Top="228" FontSize="18"/>
+        </Canvas>
+
+        <Canvas Margin="223,32,20,20" Background="White" x:Name="EditUserProfile" Visibility="Hidden" IsEnabled="False">
+            <Label Content="Editing Profile" FontSize="30" FontFamily="Ancona-Ex" Canvas.Left="230"/>
+            <Label x:Name="NewLabel" Content="Enter New Name:" Canvas.Left="61" Canvas.Top="94" FontSize="15" Visibility="Hidden"/>
+            <TextBox x:Name="txtNew" Canvas.Left="248" Canvas.Top="96" Width="219" Height="26" IsEnabled="False"/>
+            <Button x:Name="EditConfirmButton" Content="Confirm" Click="EditConfirmButton_Click" Width="251" Height="34" Canvas.Left="230" Canvas.Top="155" FontSize="18" IsEnabled="False"/>
+            <Button x:Name="UserNameButton" Content="Edit User Name" Click="UserNameButton_Click" Width="251" Height="34" Canvas.Left="230" Canvas.Top="93" FontSize="18"/>
+            <Button x:Name="PasswordButton" Content="Edit Password" Click="PasswordButton_Click"  Width="251" Height="34" Canvas.Left="230" Canvas.Top="155" FontSize="18"/>
+        </Canvas>
+
+        <Border x:Name="Date" BorderBrush="Black" BorderThickness="1" CornerRadius="10" Margin="290,98,76,96" Visibility="Hidden" IsEnabled="False" >
+            <Canvas Margin="20" Background="White">
+                <Label Content="Submission/return" FontSize="13" Canvas.Top="30" Canvas.Left="60"/>
+                <TextBox x:Name="txtSR" Canvas.Left="64" Canvas.Top="52" Width="469" Height="40"/>
+                <Label Content="Submission Date" FontSize="13" Canvas.Top="107" Canvas.Left="60"/>
+                <DatePicker x:Name="SubDate" Canvas.Left="64" Canvas.Top="129" Width="210" Height="40"/>
+
+                <Label Content="Return Date" FontSize="13" Canvas.Top="107" Canvas.Left="319"/>
+                <DatePicker x:Name="RetDate" Canvas.Left="323" Canvas.Top="129" Width="210" Height="40"/>
+                <Button Content="Apply" FontSize="16" Width="469" Canvas.Left="64" Canvas.Top="187" Height="27"/>
+            </Canvas>
+        </Border>
+
+        <Canvas x:Name="Chat" Margin="218,10,20,20" Visibility="Hidden" IsEnabled="False">
+            <ScrollViewer x:Name="MyScrollViewer" Background="#FF95898A" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Canvas.Top="63" Width="350" Canvas.Left="176" Height="313">
+                <StackPanel x:Name="MessageContainer" Margin="10" Orientation="Vertical"/>
+            </ScrollViewer>
+
+            <Button Content="Send" Width="87" Canvas.Left="439" Canvas.Top="386" Height="28" Click="SendButton_Click"/>
+            <TextBox x:Name="EnterTextBox" Width="219" Height="28" Text="Enter message..." Canvas.Left="176" Canvas.Top="386" ClipToBounds="True" BorderBrush="Black" BorderThickness="1"/>
+            <Label Content="Car Rental Customer Service" Canvas.Left="110" Canvas.Top="10" FontFamily="Ancona-Ex" FontSize="30"/>
+        </Canvas>
+
+        <Image x:Name="BackButton" Source="D:\\CarRentalApp\\CarRentalApp\\ArrowIcon.png" Cursor="Hand" Visibility="Hidden" IsEnabled="False" Margin="223,36,687,401" MouseDown="BackButton_MouseDown"/>
+        <Image x:Name="CloseButton" Source="D:\\CarRentalApp\\CarRentalApp\\CrossIcon.png" Cursor="Hand" MouseDown="BackButton_MouseDown" Visibility="Hidden" IsEnabled="False" Margin="316,119,630,307"/>
+
+    </Grid>
+</Window>
