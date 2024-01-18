@@ -23,6 +23,9 @@ namespace CarRentalApp
             this.StatusLabel = StatusLabel;
             this.userID = userID;
             this.carID = carID;
+
+            SubDate.DisplayDateStart = DateTime.Today;
+            RetDate.DisplayDateStart = DateTime.Today;
         }
 
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
@@ -35,10 +38,16 @@ namespace CarRentalApp
             int rentDays = (int)difference.TotalDays;
             int PricePerDay = 0;
 
-            if (string.IsNullOrEmpty(SR))
+            if (string.IsNullOrWhiteSpace(SR) || SubDate.SelectedDate == null || RetDate.SelectedDate == null)
             {
                 MessageBox.Show("All fields must be filled", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
+            }
+
+            if (RetDate.SelectedDate < SubDate.SelectedDate)
+            {
+                MessageBox.Show("Return date cannot be earlier than submission date", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                RetDate.SelectedDate = SubDate.SelectedDate;
             }
 
             if (userID == -1 || userID == 0)

@@ -55,12 +55,29 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CarControl.xaml.cs">
+      <DependentUpon>CarControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CategoryControl.xaml.cs">
+      <DependentUpon>CategoryControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GridFilling.cs" />
     <Compile Include="MessageControl.xaml.cs">
       <DependentUpon>MessageControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SqlConnectionManager.cs" />
     <Compile Include="User.cs" />
     <Compile Include="UserMessage.cs" />
     <Compile Include="UserMessageViewModel.cs" />
+    <Compile Include="Validation.cs" />
+    <Page Include="CarControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CategoryControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

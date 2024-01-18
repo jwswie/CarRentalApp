@@ -3,19 +3,19 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.IO;
 
-namespace CarRentalApp
+namespace Server
 {
     /// <summary>
-    /// Interaction logic for CarControl.xaml
+    /// Interaction logic for CategoryControl.xaml
     /// </summary>
-    public partial class CarControl : UserControl
+    public partial class CategoryControl : UserControl
     {
-        public CarControl(byte[] img, string model, string ID)
+        public CategoryControl(byte[] img, string category, string price)
         {
             InitializeComponent();
 
-            CarModelLabel.Content = model;
-            IDLabel.Content = ID;
+            Category.Content = category;
+            Price.Content = price;
 
             if (img != null)
             {

@@ -24,19 +24,17 @@ namespace CarRentalApp
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    // White (FFD4D4D4), Black, Blue (FF4479A9), Orange (FFF9772B), Grey (FF8F949B), Metallic (FF545559), Brown (FFD4C6BB), Red (#FF970100)
+    // sqlExpression
     public partial class MainWindow : Window
     {
         static public string connectionString = @"Data Source = DESKTOP-BVS5CLQ; Initial Catalog = CarRental; Trusted_Connection=True; TrustServerCertificate = True";
         static private string fullName, email, password;
         static private int userID, carID;
-        static private string currentWindow, category, currrentMode;
-        //static private string[] messageColors = { "#FFFCA590", "#FFFFFFA0", "#FFCDEFF1", "#FFF8E7B4" };
-        static private string[] messageColors = { "#FFFCA590", "#FFFFFFA0"/*, "#FFCDEFF1", "#FFF8E7B4" */};
+        static private string currentWindow, category;
+
         private TcpClient client;
         private NetworkStream stream;
-        //bob@gmail.com
-        // White (FFD4D4D4), Black, Blue (FF4479A9), Orange (FFF9772B), Grey (FF8F949B), Metallic (FF545559), Brown (FFD4C6BB), Red (#FF970100)
-        // sqlExpression
         static public SqlConnectionManager sqlConnectionManager = new SqlConnectionManager(connectionString);
 
         public MainWindow()
@@ -44,28 +42,25 @@ namespace CarRentalApp
             InitializeComponent();
             Closed += Window_Closed;
             sqlConnectionManager.OpenConnection();
-            ConnectToServer();
-            /*InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\FiatPandaWhite.png", 1);
-            InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\FiatPandaGrey.png", 2);
-            InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\FiatPandaMetalic.png", 3);
-            InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\OpelCorsaOrange.png", 4);
-            InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\VolkswagenPoloWhite.png", 5);
-            InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\VolkswagenPoloBrown.png", 6);
-            InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\VolkswagenPoloBlue.png", 7);
-            InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\Fiat500XBlue.png", 8);
-            InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\Fiat500XBlack.png", 9);
-            InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\Fiat500XWhite.png", 10);
-            InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\FordFocusSWWhite.png", 11);
-            InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\FordFocusSWMetallic.png", 12);
-            InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\FordFocusSWRed.png", 13);*/
-            Date.Background = (Brush)new BrushConverter().ConvertFromString("White");
+            // ConnectToServer();
+            
             currentWindow = "Category";
             GridFilling.FillCategory(sqlConnectionManager, CatalogGrid);
 
-            /* double canvasWidth = Date.ActualWidth;
-             double canvasHeight = Date.ActualHeight;
+            /*double canvasWidth = UserProfile.ActualWidth;
+            double canvasHeight = UserProfile.ActualHeight;
 
-             MessageBox.Show($"W {canvasWidth} H {canvasHeight}");*/
+            MessageBox.Show($"W {canvasWidth} H {canvasHeight}");*/
+        }
+
+        private void HomeButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetVisibility("Close Log In Window"); SetVisibility("Close Sign In Window"); SetVisibility("Close Profile"); SetVisibility("Close View"); SetVisibility("Close Date"); SetVisibility("Close Chat");
+            currentWindow = "Category";
+            GridFilling.FillCategory(sqlConnectionManager, CatalogGrid);
+            Color1.Fill = (Brush)new BrushConverter().ConvertFromString("White");
+            Color2.Fill = (Brush)new BrushConverter().ConvertFromString("White");
+            Color3.Fill = (Brush)new BrushConverter().ConvertFromString("White");
         }
 
         private void ClearTextBoxes()
@@ -108,11 +103,17 @@ namespace CarRentalApp
                     break;
 
                 case "Open Profile":
-                    UserProfile.Visibility = Visibility.Visible; UserProfile.IsEnabled = true;
+                    ProfileControl profileControl = new ProfileControl(sqlConnectionManager, fullName, userID);
+                    profileControl.Margin = new Thickness(218, 10, 0, 10);
+                    MainGrid.Children.Add(profileControl);
                     break;
 
                 case "Close Profile":
-                    UserProfile.Visibility = Visibility.Hidden; UserProfile.IsEnabled = false;
+                    ProfileControl profileControlDelete = MainGrid.Children.OfType<ProfileControl>().FirstOrDefault();
+                    if (profileControlDelete != null)
+                    {
+                        MainGrid.Children.Remove(profileControlDelete);
+                    }
                     break;
 
                 case "Open View":
@@ -147,21 +148,6 @@ namespace CarRentalApp
                     BackButton.IsEnabled = true;
                     CloseButton.Visibility = Visibility.Hidden; CloseButton.IsEnabled = false;
                     currentWindow = "View";
-                    break;
-
-                case "Open Edit Profile":
-                    EditUserProfile.Visibility = Visibility.Visible; EditUserProfile.IsEnabled = true;
-                    BackButton.Visibility = Visibility.Visible; BackButton.IsEnabled = true;
-                    UserNameButton.Visibility = Visibility.Visible; UserNameButton.IsEnabled = true;
-                    PasswordButton.Visibility = Visibility.Visible; PasswordButton.IsEnabled = true;
-                    currentWindow = "Edit Profile";
-                    break;
-
-                case "Close Edit Profile":
-                    EditUserProfile.Visibility = Visibility.Hidden; EditUserProfile.IsEnabled = false;
-                    BackButton.Visibility = Visibility.Hidden; BackButton.IsEnabled = false;
-                    UserNameButton.Visibility = Visibility.Hidden; UserNameButton.IsEnabled = false;
-                    PasswordButton.Visibility = Visibility.Hidden; PasswordButton.IsEnabled = false;
                     break;
 
                 case "Open Chat":
@@ -436,7 +422,6 @@ namespace CarRentalApp
                                     fullName = reader.GetString(1);
                                     LogInLabel.Content = "Log Out";
                                     ClearTextBoxes();
-                                    ProfileUsernameLabel.Content = reader.GetString(1);
                                     reader.Close();
                                     GridFilling.FillCategory(sqlConnectionManager, CatalogGrid);
                                 }
@@ -472,18 +457,7 @@ namespace CarRentalApp
             else
             {
                 SetVisibility("Open Profile");
-                ProfileUsernameLabel.Content = fullName;
             }
-        }
-
-        private void HomeButton_Click(object sender, RoutedEventArgs e)
-        {
-            SetVisibility("Close Log In Window"); SetVisibility("Close Sign In Window"); SetVisibility("Close Profile"); SetVisibility("Close View"); SetVisibility("Close Date"); SetVisibility("Close Chat");
-            currentWindow = "Category";
-            GridFilling.FillCategory(sqlConnectionManager, CatalogGrid);
-            Color1.Fill = (Brush)new BrushConverter().ConvertFromString("White");
-            Color2.Fill = (Brush)new BrushConverter().ConvertFromString("White");
-            Color3.Fill = (Brush)new BrushConverter().ConvertFromString("White");
         }
 
         private void BookButton_Click(object sender, RoutedEventArgs e)
@@ -596,7 +570,7 @@ namespace CarRentalApp
             password = pwdPassword.Password;
             string confirmPassword = pwdConfirmPassword.Password;
 
-            if (string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(confirmPassword))
+            if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(confirmPassword))
             {
                 MessageBox.Show("All fields must be filled", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -689,6 +663,11 @@ namespace CarRentalApp
                 case "Date":
                     SetVisibility("Close Date");
                     break;
+
+                case "Book List":
+                    SetVisibility("Close Book List");
+                    SetVisibility("Open Profile");
+                    break;
                 default:
                     break;
             }
@@ -696,145 +675,7 @@ namespace CarRentalApp
 
         private void ContactButton_Click(object sender, RoutedEventArgs e)
         {
-            SetVisibility("Open Chat"); CatalogGrid.Children.Clear();
-        }
-
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            sqlConnectionManager.CloseConnection();
-            client.Close();
-        }
-
-        private void EditProfileButton_Click(object sender, RoutedEventArgs e)
-        {
-            SetVisibility("Close Profile"); SetVisibility("Open Edit Profile");
-
-            UserNameButton.Visibility = Visibility.Visible; UserNameButton.IsEnabled = true;
-            PasswordButton.Visibility = Visibility.Visible; PasswordButton.IsEnabled = true;
-            NewLabel.Visibility = Visibility.Hidden;
-            txtNew.IsEnabled = false;
-            EditConfirmButton.Visibility = Visibility.Hidden; EditConfirmButton.IsEnabled = false;
-        }
-
-        private void UserNameButton_Click(object sender, RoutedEventArgs e)
-        {
-            UserNameButton.Visibility = Visibility.Hidden; UserNameButton.IsEnabled = false;
-            PasswordButton.Visibility = Visibility.Hidden; PasswordButton.IsEnabled = false;
-            NewLabel.Content = "Enter New Name:"; NewLabel.Visibility = Visibility.Visible;
-            txtNew.IsEnabled = true;
-            EditConfirmButton.Visibility = Visibility.Visible; EditConfirmButton.IsEnabled = true;
-            currrentMode = "Edit Name";
-        }
-
-        private void PasswordButton_Click(object sender, RoutedEventArgs e)
-        {
-            UserNameButton.Visibility = Visibility.Hidden; UserNameButton.IsEnabled = false;
-            PasswordButton.Visibility = Visibility.Hidden; PasswordButton.IsEnabled = false;
-            NewLabel.Content = "Enter New Password:"; NewLabel.Visibility = Visibility.Visible;
-            txtNew.IsEnabled = true;
-            EditConfirmButton.Visibility = Visibility.Visible; EditConfirmButton.IsEnabled = true;
-            currrentMode = "Edit Password";
-        }
-
-        private void EditConfirmButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (currrentMode == "Edit Name")
-            {
-                string NewName = txtNew.Text;
-
-                if (string.IsNullOrEmpty(NewName))
-                {
-                    MessageBox.Show("Field must be filled", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                try
-                {
-                    using (SqlConnection connection = new SqlConnection(connectionString))
-                    {
-                        connection.Open();
-
-                        string query = "UPDATE Users SET Username = @Username " + "WHERE UserID = @UserID";
-
-                        using (SqlCommand command = new SqlCommand(query, connection))
-                        {
-                            command.Parameters.AddWithValue("@UserID", userID);
-                            command.Parameters.AddWithValue("@Username", NewName);
-
-                            int rowsAffected = command.ExecuteNonQuery();
-
-                            if (rowsAffected > 0)
-                            {
-                                fullName = NewName;
-                                MessageBox.Show("Name updated successfully");
-
-                                SetVisibility("Close Edit Profile"); SetVisibility("Open Profile");
-                                ClearTextBoxes();
-                            }
-                            else
-                            {
-                                MessageBox.Show("Could not find an entry to update", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error updating data: {ex.Message}", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-            else if (currrentMode == "Edit Password")
-            {
-                string NewPassword = txtNew.Text;
-                string passwordHash;
-
-                if (string.IsNullOrEmpty(NewPassword))
-                {
-                    MessageBox.Show("Field must be filled", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                using (SHA256 sha256 = SHA256.Create())
-                {
-                    byte[] passwordBytes = Encoding.UTF8.GetBytes(txtNew.Text);
-                    byte[] passwordHashBytes = sha256.ComputeHash(passwordBytes);
-                    passwordHash = BitConverter.ToString(passwordHashBytes).Replace("-", "").ToLower();
-                }
-
-                try
-                {
-                    using (SqlConnection connection = new SqlConnection(connectionString))
-                    {
-                        connection.Open();
-
-                        string query = "UPDATE Users SET HashedPassword = @HashedPassword " + "WHERE UserID = @UserID";
-
-                        using (SqlCommand command = new SqlCommand(query, connection))
-                        {
-                            command.Parameters.AddWithValue("@UserID", userID);
-                            command.Parameters.AddWithValue("@HashedPassword", passwordHash);
-
-                            int rowsAffected = command.ExecuteNonQuery();
-
-                            if (rowsAffected > 0)
-                            {
-                                MessageBox.Show("Password updated successfully");
-
-                                SetVisibility("Close Edit Profile"); SetVisibility("Open Profile");
-                                ClearTextBoxes();
-                            }
-                            else
-                            {
-                                MessageBox.Show("Could not find an entry to update", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error updating data: {ex.Message}", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
+            SetVisibility("Open Chat"); CatalogGrid.Children.Clear(); SetVisibility("Close Profile");
         }
 
         private async void SendButton_Click(object sender, RoutedEventArgs e)
@@ -863,7 +704,7 @@ namespace CarRentalApp
         {
             try
             {
-                MessageControl messageControl = new MessageControl(messageColors);
+                MessageControl messageControl = new MessageControl();
                 User user = new User() { Username = fullName };
                 UserMessageViewModel userMessageViewModel = new UserMessageViewModel(user);
 
@@ -899,6 +740,12 @@ namespace CarRentalApp
             {
                 MessageBox.Show("Error connecting to the server: " + ex.Message);
             }
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            sqlConnectionManager.CloseConnection();
+            //client.Close();
         }
     }
 }

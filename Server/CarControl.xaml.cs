@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.IO;
 
-namespace CarRentalApp
+namespace Server
 {
     /// <summary>
     /// Interaction logic for CarControl.xaml

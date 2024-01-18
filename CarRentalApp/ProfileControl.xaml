@@ -1,0 +1,53 @@
+﻿<UserControl x:Class="CarRentalApp.ProfileControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CarRentalApp"
+             mc:Ignorable="d" 
+             d:DesignHeight="441" d:DesignWidth="766">
+    
+    <UserControl.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#FFE40A1A" />
+            <Setter Property="FontFamily" Value="Verdana" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FF262626" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="Label">
+            <Setter Property="FontFamily" Value="Verdana" />
+            <Setter Property="Foreground" Value="Black" />
+        </Style>
+    </UserControl.Resources>
+    
+    <Grid>
+        <Canvas x:Name="UserProfile" Background="White" Margin="10">
+            <Label Content="Your Profile" FontSize="30" Canvas.Left="286" Canvas.Top="10" FontFamily="Ancona-Ex"/>
+            <Label x:Name="ProfileUsernameLabel" Content="User Name" FontSize="20" HorizontalAlignment="Center" Canvas.Left="334" Canvas.Top="67"/>
+            <Button Content="Edit profile"  Width="251" Height="34" Canvas.Left="269" Canvas.Top="155" FontSize="18" Click="EditProfileButton_Click"/>
+            <Button Content="Booked Cars" Width="251" Height="34" Canvas.Left="269" Canvas.Top="228" FontSize="18" Click="BookListButton_Click"/>
+        </Canvas>
+
+        <Canvas x:Name="EditUserProfile" Margin="10,7,10,13" Background="White" Visibility="Hidden" IsEnabled="False">
+            <Label Content="Editing Profile" FontSize="30" FontFamily="Ancona-Ex" Canvas.Left="248"/>
+            <Label x:Name="NewLabel" Content="Enter New Name:" Canvas.Left="85" Canvas.Top="116" FontSize="15" Visibility="Hidden"/>
+            <TextBox x:Name="txtNew" Canvas.Left="272" Canvas.Top="118" Width="219" Height="26" IsEnabled="False"/>
+            <Button x:Name="EditConfirmButton" Content="Confirm" Click="EditConfirmButton_Click" Width="251" Height="34" Canvas.Left="254" Canvas.Top="177" FontSize="18" IsEnabled="False"/>
+            <Button x:Name="UserNameButton" Content="Edit User Name" Click="UserNameButton_Click" Width="251" Height="34" Canvas.Left="254" Canvas.Top="115" FontSize="18"/>
+            <Button x:Name="PasswordButton" Content="Edit Password" Click="PasswordButton_Click"  Width="251" Height="34" Canvas.Left="254" Canvas.Top="177" FontSize="18"/>
+        </Canvas>
+
+        <Canvas x:Name="BookList" Margin="10,7,10,13" Background="White" Visibility="Hidden" IsEnabled="False">
+            <Label Content="Rented cars" FontFamily="Ancona-Ex" FontSize="30" HorizontalAlignment="Center" Canvas.Left="262" Canvas.Top="-3"/>
+            <ListBox Name="cardListBox" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="486" Height="300" Canvas.Left="121" Canvas.Top="74"/>
+        </Canvas>
+
+        <Image x:Name="BackButton" Source="D:\\CarRentalApp\\CarRentalApp\\ArrowIcon.png" Cursor="Hand" Visibility="Hidden" IsEnabled="False" Margin="223,36,687,401" MouseDown="BackButton_MouseDown"/>
+    </Grid>
+</UserControl>
