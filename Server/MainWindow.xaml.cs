@@ -379,7 +379,7 @@ namespace Server
 
                                 if (enteredPasswordHash == storedHashedPassword)
                                 {
-                                    SetVisibility("Close Log In Window"); SetVisibility("Open Main Window");
+                                    SetVisibility("Close Log In Window");
 
                                     LogInLabel.Content = "Log Out";
                                     ClearTextBoxes();
