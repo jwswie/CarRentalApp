@@ -62,10 +62,16 @@
       <DependentUpon>CategoryControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="GridFilling.cs" />
+    <Compile Include="ManagementControl.xaml.cs">
+      <DependentUpon>ManagementControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MessageControl.xaml.cs">
       <DependentUpon>MessageControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="SqlConnectionManager.cs" />
+    <Compile Include="UpdateControl.xaml.cs">
+      <DependentUpon>UpdateControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="User.cs" />
     <Compile Include="UserMessage.cs" />
     <Compile Include="UserMessageViewModel.cs" />
@@ -90,7 +96,15 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="ManagementControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MessageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UpdateControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

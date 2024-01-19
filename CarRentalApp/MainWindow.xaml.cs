@@ -25,7 +25,6 @@ namespace CarRentalApp
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     // White (FFD4D4D4), Black, Blue (FF4479A9), Orange (FFF9772B), Grey (FF8F949B), Metallic (FF545559), Brown (FFD4C6BB), Red (#FF970100)
-    // sqlExpression
     public partial class MainWindow : Window
     {
         static public string connectionString = @"Data Source = DESKTOP-BVS5CLQ; Initial Catalog = CarRental; Trusted_Connection=True; TrustServerCertificate = True";
@@ -42,7 +41,7 @@ namespace CarRentalApp
             InitializeComponent();
             Closed += Window_Closed;
             sqlConnectionManager.OpenConnection();
-            // ConnectToServer();
+            ConnectToServer();
             
             currentWindow = "Category";
             GridFilling.FillCategory(sqlConnectionManager, CatalogGrid);
@@ -65,13 +64,10 @@ namespace CarRentalApp
 
         private void ClearTextBoxes()
         {
-            txtEmailL.Clear();
-            pwdPasswordL.Clear();
+            txtEmailL.Clear(); pwdPasswordL.Clear();
 
-            txtFullName.Clear();
-            txtEmail.Clear();
-            pwdPassword.Clear();
-            pwdConfirmPassword.Clear();
+            txtFullName.Clear(); txtEmail.Clear();
+            pwdPassword.Clear(); pwdConfirmPassword.Clear();
         }
 
         public void SetVisibility(string window)
@@ -111,9 +107,7 @@ namespace CarRentalApp
                 case "Close Profile":
                     ProfileControl profileControlDelete = MainGrid.Children.OfType<ProfileControl>().FirstOrDefault();
                     if (profileControlDelete != null)
-                    {
                         MainGrid.Children.Remove(profileControlDelete);
-                    }
                     break;
 
                 case "Open View":
@@ -132,8 +126,7 @@ namespace CarRentalApp
                     DateControl dateControl = new DateControl(sqlConnectionManager, StatusLabel, userID, carID);
                     dateControl.Margin = new Thickness(290, 98, 76, 96);
                     MainGrid.Children.Add(dateControl);
-                    BackButton.IsEnabled = false;
-                    CloseButton.Visibility = Visibility.Visible; CloseButton.IsEnabled = true;
+                    BackButton.IsEnabled = false; CloseButton.Visibility = Visibility.Visible; CloseButton.IsEnabled = true;
                     Panel.SetZIndex(dateControl, 0);
                     Panel.SetZIndex(CloseButton, 1);
                     currentWindow = "Date";
@@ -142,9 +135,7 @@ namespace CarRentalApp
                 case "Close Date":
                      DateControl dateControlDelete = MainGrid.Children.OfType<DateControl>().FirstOrDefault();
                      if (dateControlDelete != null)
-                     {
                          MainGrid.Children.Remove(dateControlDelete);
-                     }
                     BackButton.IsEnabled = true;
                     CloseButton.Visibility = Visibility.Hidden; CloseButton.IsEnabled = false;
                     currentWindow = "View";
@@ -152,11 +143,13 @@ namespace CarRentalApp
 
                 case "Open Chat":
                     Chat.Visibility = Visibility.Visible; Chat.IsEnabled = true;
+                    ChatBorder.Visibility = Visibility.Visible; ChatBorder.IsEnabled = true;
                     currentWindow = "Chat";
                     break;
 
                 case "Close Chat":
                     Chat.Visibility = Visibility.Hidden; Chat.IsEnabled = false;
+                    ChatBorder.Visibility = Visibility.Hidden; ChatBorder.IsEnabled = false;
                     currentWindow = "Chat";
                     break;
 
@@ -368,102 +361,12 @@ namespace CarRentalApp
                     
                 }
             }
-        } 
-
-        private void LogInLabel_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            SetVisibility("Close Main Window"); SetVisibility("Open Log In Window"); SetVisibility("Close Profile"); SetVisibility("Close View"); SetVisibility("Close Date"); SetVisibility("Close Chat");
-            CatalogGrid.Children.Clear();
-            string LabelContent = LogInLabel.Content.ToString();
-
-            if (LabelContent == "Log Out")
-            {
-                LogInLabel.Content = "Log In";
-                userID = -1;
-            }
-        } 
-
-        private void logInButton_Click(object sender, RoutedEventArgs e)
-        {
-            string email = txtEmailL.Text;
-
-            string sqlExpression = "SELECT * FROM Users WHERE Email = @Email";
-
-            try
-            {
-                using (SqlCommand command = new SqlCommand(sqlExpression, sqlConnectionManager.connection))
-                {
-                    command.Parameters.AddWithValue("@Email", email);
-
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            userID = reader.GetInt32(0);
-                            string storedHashedPassword = reader.GetString(2);
-
-                            byte[] storedHashBytes = Convert.FromBase64String(storedHashedPassword); //Декодирование хеша пароля из БД в массив байтов
-                            byte[] salt = new byte[16];
-                            Array.Copy(storedHashBytes, 0, salt, 0, 16); //Первые 16 байтов декодированного хеша копируются в новый массив salt, который представляет собой соль, использованную при хешировании пароля
-
-                            using (Rfc2898DeriveBytes pbkdf2 = new Rfc2898DeriveBytes(pwdPasswordL.Password, salt, 10000))
-                            { //Используем Rfc2898DeriveBytes, чтобы повторно создать хеш для введенного пароля с использованием той же соли, которая была использована при создании оригинального хеша
-                                byte[] hash = pbkdf2.GetBytes(20);
-
-                                byte[] hashBytes = new byte[36];
-                                Array.Copy(salt, 0, hashBytes, 0, 16);
-                                Array.Copy(hash, 0, hashBytes, 16, 20);
-                                string enteredPasswordHash = Convert.ToBase64String(hashBytes); //Создаем новый массив байтов hashBytes, в котором сначала идут байты соли, а затем байты хеша. Затем этот массив конвертируется в строку
-
-                                if (enteredPasswordHash == storedHashedPassword)
-                                {
-                                    SetVisibility("Close Log In Window"); SetVisibility("Open Main Window");
-
-                                    fullName = reader.GetString(1);
-                                    LogInLabel.Content = "Log Out";
-                                    ClearTextBoxes();
-                                    reader.Close();
-                                    GridFilling.FillCategory(sqlConnectionManager, CatalogGrid);
-                                }
-                                else
-                                {
-                                    MessageBox.Show("Incorrect Password", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            MessageBox.Show("Incorrect Email", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("ERROR: " + ex.Message, "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private void ProfileButton_Click(object sender, RoutedEventArgs e)
-        {
-            SetVisibility("Close Date"); SetVisibility("Close Chat");
-            string LabelContent = LogInLabel.Content.ToString();
-
-            if (LabelContent == "Log In")
-            {
-                MessageBox.Show("You can't open your profile because you haven't logged in yet", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-            else
-            {
-                SetVisibility("Open Profile");
-            }
         }
 
         private void BookButton_Click(object sender, RoutedEventArgs e)
         {
             SetVisibility("Open Date");
-        } 
+        }
 
         private void ColorButton_Click(object sender, MouseButtonEventArgs e)
         {
@@ -558,10 +461,87 @@ namespace CarRentalApp
             }
         }
 
+        #region LogIn/SignIn
+
+        private void LogInLabel_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            SetVisibility("Close Main Window"); SetVisibility("Open Log In Window"); SetVisibility("Close Profile"); SetVisibility("Close View"); SetVisibility("Close Date"); SetVisibility("Close Chat");
+            CatalogGrid.Children.Clear();
+            string LabelContent = LogInLabel.Content.ToString();
+
+            if (LabelContent == "Log Out")
+            {
+                LogInLabel.Content = "Log In";
+                userID = -1;
+                MessageContainer.Children.Clear();
+            }
+        }
+
+        private void logInButton_Click(object sender, RoutedEventArgs e)
+        {
+            string email = txtEmailL.Text;
+
+            string sqlExpression = "SELECT * FROM Users WHERE Email = @Email";
+
+            try
+            {
+                using (SqlCommand command = new SqlCommand(sqlExpression, sqlConnectionManager.connection))
+                {
+                    command.Parameters.AddWithValue("@Email", email);
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            userID = reader.GetInt32(0);
+                            string storedHashedPassword = reader.GetString(2);
+
+                            byte[] storedHashBytes = Convert.FromBase64String(storedHashedPassword); //Декодирование хеша пароля из БД в массив байтов
+                            byte[] salt = new byte[16];
+                            Array.Copy(storedHashBytes, 0, salt, 0, 16); //Первые 16 байтов декодированного хеша копируются в новый массив salt, который представляет собой соль, использованную при хешировании пароля
+
+                            using (Rfc2898DeriveBytes pbkdf2 = new Rfc2898DeriveBytes(pwdPasswordL.Password, salt, 10000))
+                            { //Используем Rfc2898DeriveBytes, чтобы повторно создать хеш для введенного пароля с использованием той же соли, которая была использована при создании оригинального хеша
+                                byte[] hash = pbkdf2.GetBytes(20);
+
+                                byte[] hashBytes = new byte[36];
+                                Array.Copy(salt, 0, hashBytes, 0, 16);
+                                Array.Copy(hash, 0, hashBytes, 16, 20);
+                                string enteredPasswordHash = Convert.ToBase64String(hashBytes); //Создаем новый массив байтов hashBytes, в котором сначала идут байты соли, а затем байты хеша. Затем этот массив конвертируется в строку
+
+                                if (enteredPasswordHash == storedHashedPassword)
+                                {
+                                    SetVisibility("Close Log In Window"); SetVisibility("Open Main Window");
+
+                                    fullName = reader.GetString(1);
+                                    LogInLabel.Content = "Log Out";
+                                    ClearTextBoxes();
+                                    reader.Close();
+                                    GridFilling.FillCategory(sqlConnectionManager, CatalogGrid);
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Incorrect Password", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Incorrect Email", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("ERROR: " + ex.Message, "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         private void SignInLabel_MouseDown(object sender, MouseButtonEventArgs e)
         {
             SetVisibility("Close Log In Window"); SetVisibility("Open Sign In Window");
-        } 
+        }
 
         private void signInButton_Click(object sender, RoutedEventArgs e)
         {
@@ -636,9 +616,27 @@ namespace CarRentalApp
             LogInLabel.Content = "Log Out";
 
             ClearTextBoxes();
-            SetVisibility("Close Sign In Window"); 
+            SetVisibility("Close Sign In Window");
             currentWindow = "Category";
             GridFilling.FillCategory(sqlConnectionManager, CatalogGrid);
+        }
+
+        #endregion
+
+        private void ProfileButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetVisibility("Close Date"); SetVisibility("Close Chat");
+            string LabelContent = LogInLabel.Content.ToString();
+
+            if (LabelContent == "Log In")
+            {
+                MessageBox.Show("You can't open your profile because you haven't logged in yet", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            else
+            {
+                SetVisibility("Open Profile");
+            }
         }
 
         private void BackButton_MouseDown(object sender, MouseButtonEventArgs e)
@@ -673,30 +671,18 @@ namespace CarRentalApp
             }
         }
 
+        #region Chat
+
         private void ContactButton_Click(object sender, RoutedEventArgs e)
         {
-            SetVisibility("Open Chat"); CatalogGrid.Children.Clear(); SetVisibility("Close Profile");
-        }
-
-        private async void SendButton_Click(object sender, RoutedEventArgs e)
-        {
-            try
+            if (userID == 0 || userID == -1)
             {
-                User user = new User() { Username = fullName };
-                UserMessageViewModel userMessageViewModel = new UserMessageViewModel(user);
-                string dataString = EnterTextBox.Text;
-                byte[] data = Encoding.UTF8.GetBytes(dataString);
-                await stream.WriteAsync(data, 0, data.Length);
-                EnterTextBox.Clear();
-                await Dispatcher.InvokeAsync(() =>
-                {
-                    userMessageViewModel.AddMessage(user, dataString, MessageContainer, MyScrollViewer, "client");
-                    DataContext = userMessageViewModel;
-                });
+                MessageBox.Show("You can't open chat because you haven't logged in yet", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
-            catch (IOException ex)
+            else
             {
-                MessageBox.Show("Server disconnected: " + ex);
+                SetVisibility("Open Chat"); CatalogGrid.Children.Clear(); SetVisibility("Close Profile");
             }
         }
 
@@ -712,7 +698,6 @@ namespace CarRentalApp
                 await client.ConnectAsync("127.0.0.1", 8888);
                 stream = client.GetStream();
 
-                // Start a task to continuously read from the server
                 Task.Run(async () =>
                 {
                     try
@@ -741,6 +726,30 @@ namespace CarRentalApp
                 MessageBox.Show("Error connecting to the server: " + ex.Message);
             }
         }
+
+        private async void SendButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                User user = new User() { Username = fullName };
+                UserMessageViewModel userMessageViewModel = new UserMessageViewModel(user);
+                string dataString = EnterTextBox.Text;
+                byte[] data = Encoding.UTF8.GetBytes(dataString);
+                await stream.WriteAsync(data, 0, data.Length);
+                EnterTextBox.Clear();
+                await Dispatcher.InvokeAsync(() =>
+                {
+                    userMessageViewModel.AddMessage(user, dataString, MessageContainer, MyScrollViewer, "client");
+                    DataContext = userMessageViewModel;
+                });
+            }
+            catch (IOException ex)
+            {
+                MessageBox.Show("Server disconnected: " + ex);
+            }
+        }
+
+        #endregion
 
         private void Window_Closed(object sender, EventArgs e)
         {

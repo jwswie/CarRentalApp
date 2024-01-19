@@ -6,9 +6,11 @@
              xmlns:local="clr-namespace:Server"
              mc:Ignorable="d" 
              d:DesignHeight="197" d:DesignWidth="259">
+    
     <Canvas Background="White">
         <Image x:Name="CarImage" Height="154" Width="259"/>
         <Label x:Name="CarModelLabel" Content="Fiat Panda" FontSize="20" Canvas.Top="157"/>
         <Label x:Name="IDLabel" FontSize="5" Canvas.Left="10" Canvas.Top="98" FontFamily="Bookman Old Style" Visibility="Hidden"/>
     </Canvas>
+    
 </UserControl>

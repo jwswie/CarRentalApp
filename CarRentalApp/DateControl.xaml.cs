@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using System.Windows;
 using System.Windows.Controls;
@@ -47,7 +48,7 @@ namespace CarRentalApp
             if (RetDate.SelectedDate < SubDate.SelectedDate)
             {
                 MessageBox.Show("Return date cannot be earlier than submission date", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
-                RetDate.SelectedDate = SubDate.SelectedDate;
+                return;
             }
 
             if (userID == -1 || userID == 0)
@@ -56,10 +57,23 @@ namespace CarRentalApp
                 return;
             }
 
+            string sql = "SELECT * FROM Cars WHERE CarID = @CarID";
+            SqlDataAdapter adapter = new SqlDataAdapter(sql, sqlConnectionManager.connection);
+            adapter.SelectCommand.Parameters.AddWithValue("@CarID", carID);
+
+            DataSet ds = new DataSet();
+            adapter.Fill(ds);
+
+            if (ds.Tables[0].Rows.Count > 0)
+            {
+                MessageBox.Show("Thsis car is already rented", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             string sqlExpresion1 = "SELECT c.CarID, p.RentDays, p.PricePerDay " +
-                                               "FROM Cars c " +
-                                               "JOIN Prices p ON c.CarID = p.ID_Car " +
-                                               "WHERE c.CarID = @targetCarID"; // Получаем цены на конкретное авто
+                                   "FROM Cars c " +
+                                   "JOIN Prices p ON c.CarID = p.ID_Car " +
+                                   "WHERE c.CarID = @targetCarID"; // Получаем цены на конкретное авто
 
             using (SqlCommand command = new SqlCommand(sqlExpresion1, sqlConnectionManager.connection))
             {
@@ -94,7 +108,11 @@ namespace CarRentalApp
                 command.Parameters.AddWithValue("@price", TotalPrice);
 
                 int number = command.ExecuteNonQuery();
-                MessageBox.Show("Payment successful", "SUCCESS", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (number > 0)
+                {
+                    Console.WriteLine("Succsess");
+                }
+
             }
 
             string sqlExpression3 = "UPDATE Cars SET CurrentStatus = 'Rented' WHERE CarID = @targetCarID"; // Меняем статус
@@ -107,11 +125,7 @@ namespace CarRentalApp
 
                 if (rowsAffected > 0)
                 {
-                    MessageBox.Show("Successful", "SUCCESS", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                else
-                {
-                    MessageBox.Show("Error", "SUCCESS", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("Payment successful", "SUCCESS", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
 

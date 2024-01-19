@@ -67,7 +67,6 @@
       <DependentUpon>DateControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="GridFilling.cs" />
-    <Compile Include="LoadImageFromDb.cs" />
     <Compile Include="MessageControl.xaml.cs">
       <DependentUpon>MessageControl.xaml</DependentUpon>
     </Compile>

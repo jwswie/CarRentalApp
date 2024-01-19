@@ -7,7 +7,6 @@ namespace Server
     /// </summary>
     public partial class MessageControl : UserControl
     {
-
         public MessageControl()
         {
             InitializeComponent();
@@ -15,8 +14,7 @@ namespace Server
 
         public new string Content
         {
-            get { return ContentTextBlock.Text; }
-            set { ContentTextBlock.Text = value; }
+            get { return ContentTextBlock.Text; } set { ContentTextBlock.Text = value; }
         }
     }
 }

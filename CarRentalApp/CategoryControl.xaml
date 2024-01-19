@@ -16,4 +16,5 @@
             <Label Content="/day" FontSize="10" Canvas.Top="164" Canvas.Left="187"/>
         </Canvas>
     </Grid>
+    
 </UserControl>

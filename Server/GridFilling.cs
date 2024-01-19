@@ -77,10 +77,10 @@ namespace Server
             try
             {
                 string sqlExpression = "WITH RankedCars AS (" +
-                                "  SELECT a.CarId, a.ID_Class, b.ImageData, c.ClassName, ROW_NUMBER() OVER(PARTITION BY c.ClassName ORDER BY a.CarId) AS RowNum " + // Номер строки отдельно для каждого класса
-                                "  FROM Cars a " +
-                                "  JOIN ImageTable b ON a.CarId = b.ImageID " +
-                                "  JOIN CarClass c ON a.ID_Class = c.ID" +
+                                "SELECT a.CarId, a.ID_Class, b.ImageData, c.ClassName, ROW_NUMBER() OVER(PARTITION BY c.ClassName ORDER BY a.CarId) AS RowNum " + // Номер строки отдельно для каждого класса
+                                "FROM Cars a " +
+                                "JOIN ImageTable b ON a.CarId = b.ImageID " +
+                                "JOIN CarClass c ON a.ID_Class = c.ID" +
                                 ") " +
                                 "SELECT CarId, ID_Class, ImageData, ClassName " +
                                 "FROM RankedCars " +
@@ -115,7 +115,6 @@ namespace Server
                         }
                     }
                 }
-
             }
             catch (Exception ex)
             {

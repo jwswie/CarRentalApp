@@ -25,7 +25,7 @@
             <Setter Property="Foreground" Value="Black" />
         </Style>
     </UserControl.Resources>
-    
+
     <Grid>
         <Border x:Name="Date" BorderBrush="Black" BorderThickness="1" CornerRadius="10">
             <Canvas Margin="20" Background="White">

@@ -32,7 +32,7 @@ namespace Server
         static private string currentWindow, category;
         static public string connectionString = @"Data Source = DESKTOP-BVS5CLQ; Initial Catalog = CarRental; Trusted_Connection=True; TrustServerCertificate = True";
         static public SqlConnectionManager sqlConnectionManager = new SqlConnectionManager(connectionString);
-        static private string fullName, login, password;
+        static private string login, password;
         static private int userID, carID;
 
         public MainWindow()
@@ -41,7 +41,7 @@ namespace Server
             Closed += Window_Closed;
             sqlConnectionManager.OpenConnection();
             GridFilling.FillCategory(sqlConnectionManager, CatalogGrid);
-            //StartServer();
+            StartServer();
         }
 
         private void ClearTextBoxes()
@@ -76,13 +76,31 @@ namespace Server
                     currentWindow = "Catalog";
                     break;
 
+                case "Open Management":
+                    // Management.Visibility = Visibility.Visible; Management.IsEnabled = true;
+                    ManagementControl managementControl = new ManagementControl(sqlConnectionManager);
+                    managementControl.Margin = new Thickness(218, 10, 0, 10);
+                    MainGrid.Children.Add(managementControl);
+                    // currentWindow = "Log In";
+                    break;
+
+                case "Close Management":
+                    // Management.Visibility = Visibility.Hidden; Management.IsEnabled = false;
+                    ManagementControl managementControlDelete = MainGrid.Children.OfType<ManagementControl>().FirstOrDefault();
+                    if (managementControlDelete != null)
+                        MainGrid.Children.Remove(managementControlDelete);
+                   // currentWindow = "Category";
+                    break;
+
                 case "Open Chat":
                     Chat.Visibility = Visibility.Visible; Chat.IsEnabled = true;
+                    ChatBorder.Visibility = Visibility.Visible; ChatBorder.IsEnabled = true;
                     currentWindow = "Chat";
                     break;
 
                 case "Close Chat":
                     Chat.Visibility = Visibility.Hidden; Chat.IsEnabled = false;
+                    ChatBorder.Visibility = Visibility.Hidden; ChatBorder.IsEnabled = false;
                     currentWindow = "Chat";
                     break;
 
@@ -91,43 +109,9 @@ namespace Server
             }
         }
 
-        private async void StartServer()
-        {
-            server = new TcpListener(IPAddress.Any, 8888);
-            server.Start();
-
-            client = await server.AcceptTcpClientAsync();
-            stream = client.GetStream();
-
-            User user = new User() { Username = "admin" };
-            UserMessageViewModel userMessageViewModel = new UserMessageViewModel(user);
-            
-            // Start a task to continuously read from the server
-            Task.Run(async () =>
-            {
-                try
-                {
-                    while (true)
-                    {
-                        byte[] buffer = new byte[1024];
-                        int byteCount = await stream.ReadAsync(buffer, 0, buffer.Length);
-                        string responseData = Encoding.UTF8.GetString(buffer, 0, byteCount);
-
-                        // Dispatcher.Invoke(() => receivedTextBox.AppendText(responseData + Environment.NewLine));
-                        Dispatcher.Invoke(() => userMessageViewModel.AddMessage(user, responseData, MessageContainer, MyScrollViewer, "client"));
-                    }
-                }
-                catch (IOException ex)
-                {
-                    // Handle IOException when the server disconnects
-                    MessageBox.Show("Server disconnected: " + ex);
-                }
-            });
-        }
-
         private void HomeButton_Click(object sender, RoutedEventArgs e)
         {
-            SetVisibility("Close Log In Window"); SetVisibility("Close Sign In Window"); SetVisibility("Close Profile"); SetVisibility("Close View"); SetVisibility("Close Date"); SetVisibility("Close Chat");
+            SetVisibility("Close Log In Window"); SetVisibility("Close Management"); SetVisibility("Close View"); SetVisibility("Close Chat");
             currentWindow = "Category";
             GridFilling.FillCategory(sqlConnectionManager, CatalogGrid);
             Color1.Fill = (Brush)new BrushConverter().ConvertFromString("White");
@@ -295,46 +279,25 @@ namespace Server
 
         private void ManagementButton_Click(object sender, RoutedEventArgs e)
         {
-            SetVisibility("Close Date"); SetVisibility("Close Chat");
+            SetVisibility("Close Chat");
             string LabelContent = LogInLabel.Content.ToString();
 
             if (LabelContent == "Log In")
             {
-                MessageBox.Show("You can't open your profile because you haven't logged in yet", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("You can't open management window because you haven't logged in yet", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             else
             {
-                SetVisibility("Open Profile");
+                SetVisibility("Open Management");
             }
         }
 
-        private async void SendButton_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                User user = new User() { Username = "admin" };
-                UserMessageViewModel userMessageViewModel = new UserMessageViewModel(user);
-                string dataString = EnterTextBox.Text;
-                byte[] data = Encoding.UTF8.GetBytes(dataString);
-                await stream.WriteAsync(data, 0, data.Length);
-                EnterTextBox.Clear();
-                await Dispatcher.InvokeAsync(() =>
-                {
-                    userMessageViewModel.AddMessage(user, dataString, MessageContainer, MyScrollViewer, "server");
-                    DataContext = userMessageViewModel;
-                });
-            }
-            catch (IOException ex)
-            {
-                // Handle IOException when the server disconnects
-                MessageBox.Show("Server disconnected: " + ex);
-            }
-        }
+        #region Log In
 
         private void LogInLabel_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            SetVisibility("Close Main Window"); SetVisibility("Open Log In Window"); SetVisibility("Close Profile"); SetVisibility("Close View"); SetVisibility("Close Date"); SetVisibility("Close Chat");
+            SetVisibility("Open Log In Window"); SetVisibility("Close Management"); SetVisibility("Close View"); SetVisibility("Close Chat");
             CatalogGrid.Children.Clear();
             string LabelContent = LogInLabel.Content.ToString();
 
@@ -342,6 +305,7 @@ namespace Server
             {
                 LogInLabel.Content = "Log In";
                 userID = -1;
+                MessageContainer.Children.Clear();
             }
         }
 
@@ -405,15 +369,81 @@ namespace Server
             }
         }
 
-        private void ContactButton_Click(object sender, RoutedEventArgs e)
+        #endregion
+
+        #region Chat
+
+        private async void StartServer()
         {
-            SetVisibility("Open Chat"); CatalogGrid.Children.Clear(); SetVisibility("Close Profile");
+            server = new TcpListener(IPAddress.Any, 8888);
+            server.Start();
+
+            client = await server.AcceptTcpClientAsync();
+            stream = client.GetStream();
+
+            User user = new User() { Username = "admin" };
+            UserMessageViewModel userMessageViewModel = new UserMessageViewModel(user);
+
+            // Start a task to continuously read from the server
+            Task.Run(async () =>
+            {
+                try
+                {
+                    while (true)
+                    {
+                        byte[] buffer = new byte[1024];
+                        int byteCount = await stream.ReadAsync(buffer, 0, buffer.Length);
+                        string responseData = Encoding.UTF8.GetString(buffer, 0, byteCount);
+
+                        // Dispatcher.Invoke(() => receivedTextBox.AppendText(responseData + Environment.NewLine));
+                        Dispatcher.Invoke(() => userMessageViewModel.AddMessage(user, responseData, MessageContainer, MyScrollViewer, "client"));
+                    }
+                }
+                catch (IOException ex)
+                {
+                    // Handle IOException when the server disconnects
+                    MessageBox.Show("Server disconnected: " + ex);
+                }
+            });
         }
 
-        private void Window_Closed(object sender, EventArgs e)
+        private void ContactButton_Click(object sender, RoutedEventArgs e)
         {
-            client.Close();
+            if (userID == 0 || userID == -1)
+            {
+                MessageBox.Show("You can't open chat because you haven't logged in yet", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            else
+            {
+                SetVisibility("Open Chat"); CatalogGrid.Children.Clear(); SetVisibility("Close Management");
+            }
         }
+
+        private async void SendButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                User user = new User() { Username = "admin" };
+                UserMessageViewModel userMessageViewModel = new UserMessageViewModel(user);
+                string dataString = EnterTextBox.Text;
+                byte[] data = Encoding.UTF8.GetBytes(dataString);
+                await stream.WriteAsync(data, 0, data.Length);
+                EnterTextBox.Clear();
+                await Dispatcher.InvokeAsync(() =>
+                {
+                    userMessageViewModel.AddMessage(user, dataString, MessageContainer, MyScrollViewer, "server");
+                    DataContext = userMessageViewModel;
+                });
+            }
+            catch (IOException ex)
+            {
+                // Handle IOException when the server disconnects
+                MessageBox.Show("Server disconnected: " + ex);
+            }
+        }
+
+        #endregion
 
         private void ColorButton_Click(object sender, MouseButtonEventArgs e)
         {
@@ -538,6 +568,12 @@ namespace Server
                 default:
                     break;
             }
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            client.Close();
+            sqlConnectionManager.CloseConnection();
         }
     }
 }
