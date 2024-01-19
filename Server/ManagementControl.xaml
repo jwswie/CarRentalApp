@@ -35,6 +35,32 @@
             <Label Content="Car Management" Canvas.Left="206" Canvas.Top="10" FontFamily="Ancona-Ex" FontSize="30"/>
         </Canvas>
 
+        <Canvas x:Name="Add" Background="White" Margin="10" Visibility="Hidden" IsEnabled="False">
+            <Label Content="Car Class ID" FontSize="13" Canvas.Top="71" Canvas.Left="167"/>
+            <TextBox x:Name="txtClass" Canvas.Left="171" Canvas.Top="93" Width="182"/>
+            <Label Content="Car Model" FontSize="13" Canvas.Top="116" Canvas.Left="167"/>
+            <TextBox x:Name="txtModel" Canvas.Left="171" Canvas.Top="138" Width="182"/>
+            <Label Content="Car Color" FontSize="13" Canvas.Top="158" Canvas.Left="167"/>
+            <TextBox x:Name="txtColor" Canvas.Left="171" Canvas.Top="180" Width="182"/>
+            <Label Content="Car Manufacture Year" FontSize="13" Canvas.Top="201" Canvas.Left="167"/>
+            <TextBox x:Name="txtYear" Canvas.Left="171" Canvas.Top="223" Width="182"/>
+            <Label Content="Car Transmission" FontSize="13" Canvas.Top="244" Canvas.Left="167"/>
+            <TextBox x:Name="txtTransmission" Canvas.Left="171" Canvas.Top="266" Width="182"/>
+            <Label Content="Car Fuel Type" FontSize="13" Canvas.Top="292" Canvas.Left="167"/>
+            <TextBox x:Name="txtFuel" Canvas.Left="171" Canvas.Top="314" Width="182"/>
+            <Label Content="Prise per 3 days" FontSize="13" Canvas.Top="71" Canvas.Left="366"/>
+            <TextBox x:Name="txt3" Canvas.Left="370" Canvas.Top="93" Width="182"/>
+            <Label Content="Prise per 9 days" FontSize="13" Canvas.Top="116" Canvas.Left="366"/>
+            <TextBox x:Name="txt9" Canvas.Left="370" Canvas.Top="138" Width="182"/>
+            <Label Content="Prise per 26 days" FontSize="13" Canvas.Top="158" Canvas.Left="366"/>
+            <TextBox x:Name="txt26" Canvas.Left="370" Canvas.Top="180" Width="182"/>
+            <Button Content="Apply" Canvas.Left="235" Canvas.Top="346" Width="251" Height="34" FontSize="18" Click="ApplyButton_Click"/>
+
+            <Label Content="Add new Car" Canvas.Left="243" Canvas.Top="10" FontFamily="Ancona-Ex" FontSize="30"/>
+            <Label Content="Path to Image" FontSize="13" Canvas.Top="201" Canvas.Left="366"/>
+            <TextBox x:Name="txtPath" Canvas.Left="370" Canvas.Top="223" Width="182"/>
+        </Canvas>
+
         <Canvas x:Name="ManagePanel" Background="White" Margin="10" Visibility="Hidden" IsEnabled="False">
             <Button x:Name="Confirm" Content="Confirm Changes" Width="251" Height="34" Canvas.Left="243" Canvas.Top="372" FontSize="18" Click="ConfirmButton_Click"/>
             <Label Content="Car Class" Canvas.Left="233" Canvas.Top="29" FontSize="14"/>
@@ -75,5 +101,7 @@
 
         <Image x:Name="BackButton" Source="D:\\CarRentalApp\\CarRentalApp\\ArrowIcon.png" Cursor="Hand" Visibility="Hidden" IsEnabled="False" Margin="10,22,711,393" MouseDown="BackButton_MouseDown"/>
         <Image x:Name="CloseButton" Source="D:\\CarRentalApp\\CarRentalApp\\CrossIcon.png" Cursor="Hand" MouseDown="BackButton_MouseDown" Visibility="Hidden" IsEnabled="False" Margin="184,42,556,363"/>
+        <Rectangle x:Name="OpacityRectangle" Fill="Black" Height="421" Width="746" Opacity="0.3" Visibility="Hidden"/>
+
     </Grid>
 </UserControl>

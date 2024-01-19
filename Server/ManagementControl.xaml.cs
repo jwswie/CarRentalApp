@@ -41,22 +41,33 @@ namespace Server
             switch (window)
             {
                 case "Open Update":
+                    OpacityRectangle.Visibility = Visibility.Visible;
                     UpdateControl updateControl = new UpdateControl(Id, sqlConnectionManager);
                     updateControl.Margin = new Thickness(173,40,169,37);
                     MainGrid.Children.Add(updateControl);
-                    BackButton.IsEnabled = false; CloseButton.Visibility = Visibility.Visible; CloseButton.IsEnabled = true;
+                    CloseButton.Visibility = Visibility.Visible; CloseButton.IsEnabled = true;
                     Panel.SetZIndex(updateControl, 0);
                     Panel.SetZIndex(CloseButton, 1);
                     currentWindow = "Update";
                     break;
 
                 case "Close Update":
+                    OpacityRectangle.Visibility = Visibility.Hidden;
                     UpdateControl updateControlDelete = MainGrid.Children.OfType<UpdateControl>().FirstOrDefault();
                     if (updateControlDelete != null)
                         MainGrid.Children.Remove(updateControlDelete);
-                    BackButton.IsEnabled = true;
                     CloseButton.Visibility = Visibility.Hidden; CloseButton.IsEnabled = false;
                     currentWindow = "Panel";
+                    break;
+
+                case "Open Add":
+                    Add.Visibility = Visibility.Visible; Add.IsEnabled = true;
+                    BackButton.Visibility = Visibility.Visible; BackButton.IsEnabled = true;
+                    break;
+
+                case "Close Add":
+                    Add.Visibility = Visibility.Hidden; Add.IsEnabled = false;
+                    BackButton.Visibility = Visibility.Hidden; BackButton.IsEnabled = false;
                     break;
 
                 default:
@@ -227,6 +238,7 @@ namespace Server
             {
                 currentWindow = "Add";
                 Mode = "Add";
+                SetVisibility("Open Add");
             }
             else if (clickedButton.Tag.ToString() == "Delete")
             {
@@ -306,6 +318,10 @@ namespace Server
                 case "Update":
                     SetVisibility("Close Update");
                     break;
+
+                case "Add":
+                    SetVisibility("Close Add");
+                    break;
                 default:
                     break;
             }
@@ -332,6 +348,32 @@ namespace Server
                     Id = selectedCar.Property1;
                     SetVisibility("Open Update");
                 }
+            }
+        }
+
+        private void ApplyButton_Click(object sender, RoutedEventArgs e)
+        {
+            string sqlExpression = "INSERT INTO Cars (ID_Class, Model, Color, ManufactureYear, Transmission, FuelType) " +
+                       "VALUES (@ID_Class, @Model, @Color, @ManufactureYear, @Transmission, @FuelType)";
+
+            SqlCommand command = new SqlCommand(sqlExpression, sqlConnectionManager.connection);
+
+            command.Parameters.AddWithValue("@ID_Class", txtClass.Text);
+            command.Parameters.AddWithValue("@Model", txtModel.Text);
+            command.Parameters.AddWithValue("@Color", txtColor.Text);
+            command.Parameters.AddWithValue("@ManufactureYear", txtYear.Text);
+            command.Parameters.AddWithValue("@Transmission", txtTransmission.Text);
+            command.Parameters.AddWithValue("@FuelType", txtFuel.Text);
+
+            int rowsAffected = command.ExecuteNonQuery();
+
+            if (rowsAffected > 0)
+            {
+                MessageBox.Show("Entry added successfully", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                MessageBox.Show("Failed to add entry", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }
