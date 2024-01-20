@@ -45,11 +45,6 @@ namespace CarRentalApp
             
             currentWindow = "Category";
             GridFilling.FillCategory(sqlConnectionManager, CatalogGrid);
-
-            /*double canvasWidth = UserProfile.ActualWidth;
-            double canvasHeight = UserProfile.ActualHeight;
-
-            MessageBox.Show($"W {canvasWidth} H {canvasHeight}");*/
         }
 
         private void HomeButton_Click(object sender, RoutedEventArgs e)

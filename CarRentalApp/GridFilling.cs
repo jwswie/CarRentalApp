@@ -131,7 +131,7 @@ namespace CarRentalApp
                 case "Intermediate":
                     return "23$";
                 case "Business":
-                    return "35$";
+                    return "30$";
                 default:
                     return "";
             }
