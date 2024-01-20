@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,7 @@ namespace Server
     public partial class ManagementControl : UserControl
     {
         private SqlConnectionManager sqlConnectionManager;
+        static public string connectionString = @"Data Source = DESKTOP-BVS5CLQ; Initial Catalog = CarRental; Trusted_Connection=True; TrustServerCertificate = True";
         private string currentWindow = "Main";
         private int idClass = 0;
         private List<Price> prices = new List<Price>();
@@ -34,6 +36,53 @@ namespace Server
         {
             InitializeComponent();
             this.sqlConnectionManager = sqlConnectionManager;
+        }
+
+        private void InsertImageIntoTable(string imagePath, int ID)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(imagePath))
+                {
+                    BitmapImage bitmapImage = new BitmapImage(new Uri(imagePath, UriKind.Absolute));
+
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        if (bitmapImage != null)
+                        {
+                            PngBitmapEncoder encoder = new PngBitmapEncoder();
+                            encoder.Frames.Add(BitmapFrame.Create(bitmapImage));
+
+                            encoder.Save(ms);
+
+                            byte[] imageArray = ms.ToArray();
+
+                            using (SqlConnection connection = new SqlConnection(connectionString))
+                            {
+                                connection.Open();
+                                string query = "INSERT INTO ImageTable VALUES (@CarID, @ImageData)";
+
+                                using (SqlCommand sqlCommand = new SqlCommand(query, connection))
+                                {
+                                    sqlCommand.Parameters.AddWithValue("@CarID", ID);
+                                    sqlCommand.Parameters.Add("@ImageData", SqlDbType.VarBinary).Value = imageArray;
+                                    sqlCommand.ExecuteNonQuery();
+                                }
+                                connection.Close();
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Please provide a valid image path", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error uploading data: {ex.Message}", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            }
         }
 
         public void SetVisibility(string window)
@@ -353,21 +402,35 @@ namespace Server
 
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
-            string sqlExpression = "INSERT INTO Cars (ID_Class, Model, Color, ManufactureYear, Transmission, FuelType) " +
-                       "VALUES (@ID_Class, @Model, @Color, @ManufactureYear, @Transmission, @FuelType)";
+            if (string.IsNullOrWhiteSpace(txtClass.Text) || string.IsNullOrWhiteSpace(txtModel.Text) || string.IsNullOrWhiteSpace(txtColor.Text) || string.IsNullOrWhiteSpace(txtYear.Text) || string.IsNullOrWhiteSpace(txtTransmission.Text) || string.IsNullOrWhiteSpace(txtFuel.Text))
+            {
+                MessageBox.Show("All fields must be filled", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(txt3.Text) || string.IsNullOrWhiteSpace(txt9.Text) || string.IsNullOrWhiteSpace(txt26.Text) || string.IsNullOrWhiteSpace(txtPath.Text))
+            {
+                MessageBox.Show("All fields must be filled", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
-            SqlCommand command = new SqlCommand(sqlExpression, sqlConnectionManager.connection);
+            string sqlExpression1 = "INSERT INTO Cars (ID_Class, Model, Color, ManufactureYear, CurrentStatus, Conditioner, Transmission, FuelType) " +
+                                   "VALUES (@ID_Class, @Model, @Color, @ManufactureYear, @CurrentStatus, @Conditioner, @Transmission, @FuelType); " +
+                                   "SELECT SCOPE_IDENTITY()";
+
+            SqlCommand command = new SqlCommand(sqlExpression1, sqlConnectionManager.connection);
 
             command.Parameters.AddWithValue("@ID_Class", txtClass.Text);
             command.Parameters.AddWithValue("@Model", txtModel.Text);
             command.Parameters.AddWithValue("@Color", txtColor.Text);
             command.Parameters.AddWithValue("@ManufactureYear", txtYear.Text);
-            command.Parameters.AddWithValue("@Transmission", txtTransmission.Text);
+            command.Parameters.AddWithValue("@CurrentStatus", "Not Rented");
+            command.Parameters.AddWithValue("@Conditioner", 1);
+            command.Parameters.AddWithValue("@Transmission", txtTransmission.Text); 
             command.Parameters.AddWithValue("@FuelType", txtFuel.Text);
 
-            int rowsAffected = command.ExecuteNonQuery();
+            int insertedCarID = Convert.ToInt32(command.ExecuteScalar());
 
-            if (rowsAffected > 0)
+            if (insertedCarID > 0)
             {
                 MessageBox.Show("Entry added successfully", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
             }
@@ -375,7 +438,40 @@ namespace Server
             {
                 MessageBox.Show("Failed to add entry", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
+            InsertImageIntoTable(txtPath.Text, insertedCarID);
+
+            AddPrice(3, txt3.Text, 3);
+
+            AddPrice(9, txt9.Text, 9);
+
+            AddPrice(26, txt26.Text, 26);
+            
         }
+
+        void AddPrice(int carID, string newPricePerDay, int days)
+        {
+            string sqlExpression = "INSERT INTO Prices (ID_Car, RentDays, PricePerDay) " +
+                                   "VALUES (@CarID, @RentDays, @NewPricePerDay)";
+
+            using (SqlCommand command = new SqlCommand(sqlExpression, sqlConnectionManager.connection))
+            {
+                command.Parameters.AddWithValue("@CarID", carID);
+                command.Parameters.AddWithValue("@RentDays", days);
+                command.Parameters.AddWithValue("@NewPricePerDay", newPricePerDay);
+
+                int rowsAffected = command.ExecuteNonQuery();
+                if (rowsAffected > 0)
+                {
+                    MessageBox.Show("Entry added successfully", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Failed to add entry", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
     }
 
     public class Car

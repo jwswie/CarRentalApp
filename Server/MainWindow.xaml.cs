@@ -41,7 +41,7 @@ namespace Server
             Closed += Window_Closed;
             sqlConnectionManager.OpenConnection();
             GridFilling.FillCategory(sqlConnectionManager, CatalogGrid);
-            //StartServer();
+            StartServer();
         }
 
         private void ClearTextBoxes()
