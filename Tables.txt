@@ -1,0 +1,177 @@
+CREATE DATABASE CarRental
+
+CREATE TABLE CarClass (
+  ID INT PRIMARY KEY IDENTITY(1,1),
+  ClassName VARCHAR(255) NOT NULL
+)
+
+CREATE TABLE Cars (
+  CarID INT PRIMARY KEY IDENTITY(1,1),
+  ID_Class INT NOT NULL,
+  Model VARCHAR(255) NOT NULL,
+  Color VARCHAR(50) NOT NULL,
+  ManufactureYear INT NOT NULL,
+  CurrentStatus VARCHAR(50) NOT NULL,
+  Conditioner INT NOT NULL, -- 1/0 (true/false)
+  Transmission VARCHAR(50) NOT NULL,
+  FuelType VARCHAR(50) NOT NULL
+)
+
+CREATE TABLE ImageTable (
+    ImageID INT PRIMARY KEY IDENTITY(1,1),
+    ID_Car INT NOT NULL,
+    ImageData VARBINARY(MAX)
+)
+
+CREATE TABLE Prices (
+  ID INT PRIMARY KEY IDENTITY(1,1),
+  ID_Car INT NOT NULL,
+  RentDays INT NOT NULL,
+  PricePerDay INT NOT NULL
+)
+
+CREATE TABLE Users (
+  ID INT PRIMARY KEY IDENTITY(1, 1),
+  Username NVARCHAR(255),
+  HashedPassword NVARCHAR(255),
+  Salt NVARCHAR(255),
+  Email NVARCHAR(255)
+)
+
+CREATE TABLE Administrators (
+  AdminID INT PRIMARY KEY IDENTITY(1, 1),
+  AdminLogin NVARCHAR(255),
+  HashedPassword NVARCHAR(255),
+  Salt NVARCHAR(255)
+)
+
+CREATE TABLE BookedCars (
+    ID INT PRIMARY KEY IDENTITY(1,1),
+    ID_User INT NOT NULL,
+    ID_Car INT NOT NULL,
+    RentDays INT NOT NULL,
+    TotalPrice INT NOT NULL
+)
+
+
+INSERT INTO Cars
+VALUES
+(1, 'Fiat Panda', 'White', 2011, 'Not Rented', 1, 'Manual', 'Gasoline'),
+(1, 'Fiat Panda', 'Grey', 2011, 'Not Rented', 1, 'Manual', 'Gasoline'),
+(1, 'Fiat Panda', 'Metallic', 2011, 'Not Rented', 1, 'Manual', 'Gasoline'),
+(1, 'Opel Corsa', 'Orange', 2020, 'Not Rented', 1, 'Manual', 'Electricity'),
+(1, 'Volkswagen Polo', 'White', 2017, 'Not Rented', 1, 'Automatic', 'Diesel'),
+(1, 'Volkswagen Polo', 'Brown', 2017, 'Not Rented', 1, 'Automatic', 'Diesel'),
+(1, 'Volkswagen Polo', 'Blue', 2017, 'Not Rented', 1, 'Automatic', 'Diesel'),
+(1, 'Fiat 500X', 'Blue', 2014, 'Not Rented', 1, 'Manual', 'Gasoline'),
+(1, 'Fiat 500X', 'Black', 2014, 'Not Rented', 1, 'Manual', 'Gasoline'),
+(1, 'Fiat 500X', 'White', 2014, 'Not Rented', 1, 'Manual', 'Gasoline'),
+(2, 'Ford Focus SW', 'White', 2018, 'Not Rented', 1, 'Manual', 'Diesel'),
+(2, 'Ford Focus SW', 'Metallic', 2018, 'Not Rented', 1, 'Manual', 'Diesel'),
+(2, 'Ford Focus SW', 'Red', 2018, 'Not Rented', 1, 'Manual', 'Diesel'),
+(2, 'Seat Leon SW', 'Metallic', 2018, 'Not Rented', 1, 'Manual', 'Diesel'),
+(3, 'Jeep Renegade', 'White', 2018, 'Not Rented', 1, 'Manual', 'Gasoline'),
+(3, 'Jeep Renegade', 'Grey', 2018, 'Not Rented', 1, 'Manual', 'Gasoline'),
+(3, 'Jeep Renegade', 'Metallic', 2018, 'Not Rented', 1, 'Manual', 'Gasoline'),
+(3, 'Seat Ateca', 'White', 2016, 'Not Rented', 1, 'Automatic', 'Diesel'),
+(3, 'Seat Ateca', 'Blue', 2016, 'Not Rented', 1, 'Automatic', 'Diesel')
+
+
+INSERT INTO CarClass
+VALUES
+('Economy'),
+('Intermediate'),
+('Business')
+
+INSERT INTO Prices
+VALUES
+(1, 3, 18),
+(1, 9, 15),
+(1, 26, 11),
+(2, 3, 18),
+(2, 9, 15),
+(2, 26, 11),
+(3, 3, 18),
+(3, 9, 15),
+(3, 26, 11),
+(4, 3, 19),
+(4, 9, 15),
+(4, 26, 12),
+(5, 3, 20),
+(5, 9, 16),
+(5, 26, 12),
+(6, 3, 20),
+(6, 9, 16),
+(6, 26, 12),
+(7, 3, 20),
+(7, 9, 16),
+(7, 26, 12),
+(8, 3, 20),
+(8, 9, 16),
+(8, 26, 13),
+(9, 3, 20),
+(9, 9, 16),
+(9, 26, 13),
+(10, 3, 20),
+(10, 9, 16),
+(10, 26, 13),
+(11, 3, 28),
+(11, 9, 24),
+(11, 26, 20),
+(12, 3, 28),
+(12, 9, 24),
+(12, 26, 20),
+(13, 3, 28),
+(13, 9, 24),
+(13, 26, 20),
+(14, 3, 29),
+(14, 9, 25),
+(14, 26, 21),
+(15, 3, 31),
+(15, 9, 26),
+(15, 26, 23),
+(16, 3, 31),
+(16, 9, 26),
+(16, 26, 23),
+(17, 3, 31),
+(17, 9, 26),
+(17, 26, 23),
+(18, 3, 30),
+(18, 9, 26),
+(18, 26, 22),
+(19, 3, 30),
+(19, 9, 26),
+(19, 26, 22)
+
+INSERT INTO Administrators
+VALUES
+('admin1', 'TEH+g5k8lnhxbJzu6sLtpDh0uD1gbGLCT6qd3e4YFbYxS3V6', 'TEH+g5k8lnhxbJzu6sLtpA==')
+
+SELECT * FROM BookedCars
+SELECT * FROM Users
+SELECT * FROM Cars
+SELECT * FROM ImageTable
+SELECT * FROM Prices
+SELECT * FROM Administrators
+
+drop table ImageTable
+-- TEH+g5k8lnhxbJzu6sLtpDh0uD1gbGLCT6qd3e4YFbYxS3V6  TEH+g5k8lnhxbJzu6sLtpA==
+/*InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\FiatPandaWhite.png", 1);
+InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\FiatPandaGrey.png", 2);
+InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\FiatPandaMetalic.png", 3);
+InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\OpelCorsaOrange.png", 4);
+InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\VolkswagenPoloWhite.png", 5);
+InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\VolkswagenPoloBrown.png", 6);
+InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\VolkswagenPoloBlue.png", 7);
+InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\Fiat500XBlue.png", 8);
+InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\Fiat500XBlack.png", 9);
+InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\Fiat500XWhite.png", 10);
+InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\FordFocusSWWhite.png", 11);
+InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\FordFocusSWMetallic.png", 12);
+InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\FordFocusSWRed.png", 13);
+InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\SeatLeonSWMetallic.png", 14);
+InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\JeepRenegadeWhite.png", 15);
+InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\JeepRenegadeGrey.png", 16);
+InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\Jeep RenegadeBlack.png", 17);
+InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\SeatAtecaWhite.png", 18);
+InsertImageIntoTable("D:\\CarRentalApp\\CarRentalApp\\SeatAtecaBlue.png", 19);*/
